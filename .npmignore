@@ -1,0 +1,9 @@
+test
+.npmignore
+.eslintrc
+.gitignore
+gulpfile.js
+.editorconfig
+coverage
+tmp
+ci-config.js
