@@ -50,6 +50,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.1.6
+
+**Patch fixes**
+
+- Adding ability to publish package from CircleCI.
+
 ### 0.1.5
 
 **Bug fixes**
