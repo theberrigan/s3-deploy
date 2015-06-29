@@ -50,6 +50,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.1.5
+
+**Bug fixes**
+
+- Adding a missing `crypto` import in the utils.
+
 ### 0.1.4
 
 **Patch fix**

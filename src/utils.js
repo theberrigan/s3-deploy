@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import mime from 'mime';
 
 /**
