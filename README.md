@@ -50,6 +50,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.1.7
+
+**Patch fixes**
+
+- Updating the repository URL.
+
 ### 0.1.6
 
 **Patch fixes**
