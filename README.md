@@ -11,7 +11,7 @@ s3-deploy './dist/**' --cwd './dist/' --region AWS_REGION --bucket SOME_BUCKET_N
 
 Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` with the AWS region of your bucket and `SOME_BUCKET_NAME` with the name of your bucket where file files should end up.
 
-You can also gzip the files before sending them, just ad `--gzip` parameter.
+You can also gzip the files before sending them, just add `--gzip` parameter.
 
 ## Commands
 
