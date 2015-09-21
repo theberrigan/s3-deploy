@@ -11,6 +11,8 @@ s3-deploy './dist/**' --cwd './dist/' --region AWS_REGION --bucket SOME_BUCKET_N
 
 Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` with the AWS region of your bucket and `SOME_BUCKET_NAME` with the name of your bucket where file files should end up.
 
+You can also gzip the files before sending them, just ad `--gzip` parameter.
+
 ## Commands
 
 ### Production build
@@ -49,6 +51,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 - After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 0.2.0
+
+**API additons**
+
+- Adding new command line parameter `--gzip`. When this is added, all files will be gzipped before sending them to Amazon S3.
 
 ### 0.1.7
 

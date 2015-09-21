@@ -1,5 +1,6 @@
 import util from 'util';
 import path from 'path';
+import zlib from 'zlib';
 
 import AWS from 'aws-sdk';
 import clone from 'lodash/lang/clone';
@@ -66,10 +67,14 @@ export function sync(client, file, opts) {
  * If it is a file, it returns file details object.
  * Otherwise it returns undefined.
  */
-export const readFile = co.wrap(function *(filepath, cwd) {
+export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
   var stat = fs.statSync(filepath);
   if(stat.isFile()) {
-    const fileContents = yield fs.readFile(filepath, {encoding: null});
+    let fileContents = yield fs.readFile(filepath, {encoding: null});
+
+    if(gzipFiles) {
+      fileContents = zlib.gzipSync(fileContents);
+    }
 
     return {
       stat: stat,
@@ -88,7 +93,7 @@ export const readFile = co.wrap(function *(filepath, cwd) {
  * and uploading files that are not there yet, or do need an update.
  */
 export const handleFile = co.wrap(function *(filePath, cwd, client, s3Options) {
-  const fileObject = yield readFile(filePath, cwd);
+  const fileObject = yield readFile(filePath, cwd, s3Options.ContentEncoding !== undefined);
 
   if(fileObject !== undefined) {
     try {
