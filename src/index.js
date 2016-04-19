@@ -1,4 +1,4 @@
-import 'babel/polyfill';
+import 'babel-polyfill';
 import glob from 'glob';
 import flatten from 'lodash/array/flatten';
 import minimist from 'minimist';
