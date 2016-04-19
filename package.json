@@ -1,6 +1,6 @@
 {
   "name": "s3-deploy",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "NodeJS bash utility for deploying files to Amazon S3",
   "scripts": {
     "test": "mocha",
@@ -22,7 +22,6 @@
   "homepage": "https://github.com/import-io/s3-deploy#readme",
   "dependencies": {
     "aws-sdk": "^2.1.36",
-    "babel": "^5.6.14",
     "co": "^4.5.4",
     "co-fs-extra": "^1.0.1",
     "glob": "^5.0.12",
@@ -32,6 +31,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^3.1.19",
+    "babel": "^5.6.14",
     "eslint": "^0.24.0",
     "isparta": "^3.0.3",
     "mocha": "^2.2.5"

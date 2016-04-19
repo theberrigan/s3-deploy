@@ -52,6 +52,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.2.1
+
+**Bug/Patch fixes**
+
+- Moving `babel` to be a dev-dependency.
+
 ### 0.2.0
 
 **API additons**
