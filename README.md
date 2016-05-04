@@ -54,6 +54,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.3.1
+
+**Patch/Bug Fixes**
+
+- Fixing an issue with cache parameter.
+
 ### 0.3.0
 
 **API Additions**

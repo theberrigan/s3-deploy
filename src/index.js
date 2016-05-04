@@ -36,7 +36,7 @@ co(function *() {
   }, {
     Bucket: options.bucket,
     ContentEncoding: options.gzip,
-    CacheControl: options.cache ? 'max-age=' + cache : undefined
+    CacheControl: options.cache ? 'max-age=' + options.cache : undefined
   });
 })
 .then(() => {
