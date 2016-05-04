@@ -13,6 +13,8 @@ Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` wi
 
 You can also gzip the files before sending them, just add `--gzip` parameter.
 
+You can also specify the `Cache-Control: max-age=X` header, where X is the number of seconds given item will be kept in the cache for. Just add `--cache X` parameter. By default this value is undefined.
+
 ## Commands
 
 ### Production build
@@ -51,6 +53,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 - After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 0.3.0
+
+**API Additions**
+
+- Adding ability to specify Cache-Control max-age seconds.
 
 ### 0.2.1
 

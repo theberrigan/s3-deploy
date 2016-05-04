@@ -15,7 +15,8 @@ co(function *() {
     bucket: argv.bucket,
     region: argv.r || argv.region || 'us-east-1',
     cwd: argv.cwd || '',
-    gzip: (argv.gzip ? 'gzip' : undefined)
+    gzip: (argv.gzip ? 'gzip' : undefined),
+    cache: (argv.cache || undefined)
   };
 
   // Get paths of all files from the glob pattern(s) that were passed as the
@@ -27,13 +28,15 @@ co(function *() {
   console.log('Deploying files: %s', globbedFiles);
   console.log('> Target S3 bucket: %s (%s region)', options.bucket, options.region);
   console.log('> Gzip:', options.gzip);
+  console.log('> Cache-Control max-age=:', options.cache);
 
   // Starts the deployment of all found files.
   return yield deploy(globbedFiles, options.cwd, {
     region: options.region
   }, {
     Bucket: options.bucket,
-    ContentEncoding: options.gzip
+    ContentEncoding: options.gzip,
+    CacheControl: options.cache ? 'max-age=' + cache : undefined
   });
 })
 .then(() => {
