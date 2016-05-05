@@ -65,3 +65,11 @@ export function buildUploadParams(file) {
 
   return params;
 }
+
+export function handleETag(opts) {
+  if(opts.Metadata && opts.Metadata.ETag === true) {
+    opts.Metadata.ETag = opts.ContentMD5;
+  }
+
+  return opts;
+}

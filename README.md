@@ -15,6 +15,8 @@ You can also gzip the files before sending them, just add `--gzip` parameter.
 
 You can also specify the `Cache-Control: max-age=X` header, where X is the number of seconds given item will be kept in the cache for. Just add `--cache X` parameter. By default this value is undefined.
 
+You can also specify the `ETag: X` header, where X is either user-defined value for this header, or MD5 of the content. To provide a custom value use `--etag X` parameter. To automatically fill this header with MD5 hash of the file, just use `--tag` parameter without any value. Internally the tool will generate MD5 hash of the content and will set it as the ETag header value. By default this parameter is undefined.
+
 ## Commands
 
 ### Production build
@@ -53,6 +55,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 - After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 0.4.0
+
+**API Additions**
+
+- Adding ability to provide ETag header value.
 
 ### 0.3.1
 

@@ -24,6 +24,7 @@ export function upload(client, file, opts) {
     }, opts);
 
     var params = Object.assign({}, utils.buildUploadParams(file), opts);
+    params = utils.handleETag(params);
     var dest = params.Key;
 
     // Upload the file to s3.
