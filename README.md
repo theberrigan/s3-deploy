@@ -17,6 +17,10 @@ You can also specify the `Cache-Control: max-age=X` header, where X is the numbe
 
 You can also specify the `ETag: X` header, where X is either user-defined value for this header, or MD5 of the content. To provide a custom value use `--etag X` parameter. To automatically fill this header with MD5 hash of the file, just use `--etag` parameter without any value. Internally the tool will generate MD5 hash of the content and will set it as the ETag header value. By default this parameter is undefined.
 
+## AWS Credentials
+AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file.  More details here:
+http://docs.aws.amazon.com/cli/latest/topic/config-vars.html
+
 ## Commands
 
 ### Production build
