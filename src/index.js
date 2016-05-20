@@ -16,9 +16,19 @@ co(function *() {
     region: argv.r || argv.region || 'us-east-1',
     cwd: argv.cwd || '',
     gzip: (argv.gzip ? 'gzip' : undefined),
-    cache: (argv.cache || undefined),
-    etag: (argv.etag || undefined)
   };
+
+  if(argv.hasOwnProperty('cache')) {
+    options.cache = argv.cache;
+  }
+
+  if(argv.hasOwnProperty('etag')) {
+    options.etag = argv.etag;
+  }
+
+  if(argv.hasOwnProperty('signatureVersion')) {
+    options.signatureVersion = argv.signatureVersion;
+  }
 
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
@@ -42,6 +52,8 @@ co(function *() {
     Metadata: {
       ETag: options.etag,
     },
+  }, {
+    signatureVersion: options.signatureVersion,
   });
 })
 .then(() => {

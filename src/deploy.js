@@ -113,7 +113,7 @@ export const handleFile = co.wrap(function *(filePath, cwd, client, s3Options) {
  * Entry point, creates AWS client, prepares AWS options,
  * and handles all provided paths.
  */
-export const deploy = co.wrap(function *(files, cwd, AWSOptions, s3Options) {
+export const deploy = co.wrap(function *(files, cwd, AWSOptions, s3Options, clientOptions = {}) {
   AWSOptions = clone(AWSOptions, true);
   s3Options = clone(s3Options, true);
 
@@ -121,7 +121,7 @@ export const deploy = co.wrap(function *(files, cwd, AWSOptions, s3Options) {
     sslEnabled: true
   }, AWSOptions));
 
-  var client = new AWS.S3();
+  var client = new AWS.S3(clientOptions);
 
   yield Promise.all(files.map(function(filePath) {
     return handleFile(filePath, cwd, client, s3Options);
