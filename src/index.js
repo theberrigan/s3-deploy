@@ -42,19 +42,30 @@ co(function *() {
   console.log('> Cache-Control max-age=:', options.cache);
   console.log('> E-Tag:', options.etag);
 
-  // Starts the deployment of all found files.
-  return yield deploy(globbedFiles, options.cwd, {
+  const AWSOptions = {
     region: options.region
-  }, {
+  };
+
+  const s3Options = {
     Bucket: options.bucket,
     ContentEncoding: options.gzip,
     CacheControl: options.cache ? 'max-age=' + options.cache : undefined,
-    Metadata: {
+  };
+
+  if(options.hasOwnProperty('etag')) {
+    s3Options.Metadata = {
       ETag: options.etag,
-    },
-  }, {
-    signatureVersion: options.signatureVersion,
-  });
+    };
+  }
+
+  const s3ClientOptions = {};
+
+  if(options.hasOwnProperty('signatureVersion')) {
+    s3ClientOptions.signatureVersion = options.signatureVersion;
+  }
+
+  // Starts the deployment of all found files.
+  return yield deploy(globbedFiles, options.cwd, AWSOptions, s3Options, s3ClientOptions);
 })
 .then(() => {
   console.log('All files uploaded.');
