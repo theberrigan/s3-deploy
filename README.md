@@ -62,6 +62,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.5.2
+
+**Bug fix**
+
+- Fixing the `aws-sdk` package version to `2.3.19`, because of: https://github.com/aws/aws-sdk-js/issues/1035
+
 ### 0.5.0
 
 **API Additions**
