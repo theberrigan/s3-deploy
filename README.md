@@ -20,7 +20,7 @@ Specifying `--gzip` will gzip all files before sending them.
 ```
 --cache X
 ```
-Use this parameter to specify the `Cache-Control: max-age=X` header, where X is the number of seconds given item will be kept in the cache for. By default this value is undefined.
+Use this parameter to specify the `Cache-Control: max-age=X` header, where X is the number of seconds a given item will be kept in the cache for. By default this value is undefined.
 
 ```
 --etag X
@@ -35,7 +35,7 @@ You can also specify the `signatureVersion` that should be used by S3 client. Cu
 ```
 --filePrefix
 ```
-Use this parameter to specify a file prefix for all your destination files. For example, if you wanted to deploy a versioned history of your project to S3 whenever publishing to npm, you couls use `--filePrefix $npm_package_version` in a script in your project's package.json file.
+Use this parameter to specify a file prefix for all your destination files. For example, if you wanted to deploy a versioned history of your project to S3 whenever publishing to npm, you could use `--filePrefix $npm_package_version` in a script in your project's package.json file.
 
 ## AWS Credentials
 AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file.  More details here:
