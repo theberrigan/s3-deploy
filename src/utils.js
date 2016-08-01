@@ -43,9 +43,10 @@ export function base64Md5(data) {
  *                       being a base path of the file location, with slashes
  *                       removed from the path.
  */
-export function buildBaseParams(file) {
+export function buildBaseParams(file, filePrefix) {
   var dest = file.path.replace(file.base, '');
   dest = dest.replace(/^\//, '');
+  dest = filePrefix + '/' + dest;
   return {
     Key: dest
   };
@@ -56,12 +57,12 @@ export function buildBaseParams(file) {
  * @param  {Object} file File object, with all it's details.
  * @return {Object}      AWS S3 upload function parameters.
  */
-export function buildUploadParams(file) {
+export function buildUploadParams(file, filePrefix) {
   var params = Object.assign({
     ContentMD5: base64Md5(file.contents),
     Body: file.contents,
     ContentType: contentType(file.path)
-  }, buildBaseParams(file));
+  }, buildBaseParams(file, filePrefix));
 
   return params;
 }

@@ -18,6 +18,10 @@ co(function *() {
     gzip: (argv.gzip ? 'gzip' : undefined),
   };
 
+  if(argv.hasOwnProperty('filePrefix')) {
+    options.filePrefix = argv.filePrefix;
+  }
+
   if(argv.hasOwnProperty('cache')) {
     options.cache = argv.cache;
   }
@@ -38,6 +42,7 @@ co(function *() {
 
   console.log('Deploying files: %s', globbedFiles);
   console.log('> Target S3 bucket: %s (%s region)', options.bucket, options.region);
+  console.log('> Target file prefix: %s', options.filePrefix);
   console.log('> Gzip:', options.gzip);
   console.log('> Cache-Control max-age=:', options.cache);
   console.log('> E-Tag:', options.etag);
@@ -65,7 +70,7 @@ co(function *() {
   }
 
   // Starts the deployment of all found files.
-  return yield deploy(globbedFiles, options.cwd, AWSOptions, s3Options, s3ClientOptions);
+  return yield deploy(globbedFiles, options, AWSOptions, s3Options, s3ClientOptions);
 })
 .then(() => {
   console.log('All files uploaded.');
