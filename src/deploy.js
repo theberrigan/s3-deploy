@@ -17,13 +17,13 @@ import * as MSG from './MSG';
  * @param  {Object} opts   Object with additional AWS parameters.
  * @return {Promise}        Returns a promise which resolves with a log message of upload status.
  */
-export function upload(client, file, opts) {
+export function upload(client, file, opts, filePrefix) {
   return new Promise((resolve, reject) => {
     opts = Object.assign({
       ACL: 'public-read'
     }, opts);
 
-    var params = Object.assign({}, utils.buildUploadParams(file), opts);
+    var params = Object.assign({}, utils.buildUploadParams(file, filePrefix), opts);
     params = utils.handleETag(params);
     var dest = params.Key;
 
@@ -46,12 +46,12 @@ export function upload(client, file, opts) {
  * @return {Promise}       Returns a promise which rejects if file already exists,
  *                         and doesn't need update. Otherwise fulfills.
  */
-export function sync(client, file, opts) {
+export function sync(client, file, opts, filePrefix) {
   return new Promise((resolve, reject) => {
     var params = Object.assign({
       IfNoneMatch: utils.createMd5Hash(file.contents),
       IfUnmodifiedSince: file.stat.mtime
-    }, utils.buildBaseParams(file), opts);
+    }, utils.buildBaseParams(file, filePrefix), opts);
 
     client.headObject(params, function(err) {
       if (err && (err.statusCode === 304 || err.statusCode === 412)) {
@@ -93,18 +93,18 @@ export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
  * checking if file is already in AWS bucket and needs updates,
  * and uploading files that are not there yet, or do need an update.
  */
-export const handleFile = co.wrap(function *(filePath, cwd, client, s3Options) {
+export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, s3Options) {
   const fileObject = yield readFile(filePath, cwd, s3Options.ContentEncoding !== undefined);
 
   if(fileObject !== undefined) {
     try {
-      yield sync(client, fileObject, s3Options);
+      yield sync(client, fileObject, filePrefix, s3Options);
     } catch (e) {
       console.log(e);
       return;
     }
 
-    const fileUploadStatus = yield upload(client, fileObject, s3Options);
+    const fileUploadStatus = yield upload(client, fileObject, s3Options, filePrefix);
     console.log(fileUploadStatus);
   }
 });
@@ -113,9 +113,11 @@ export const handleFile = co.wrap(function *(filePath, cwd, client, s3Options) {
  * Entry point, creates AWS client, prepares AWS options,
  * and handles all provided paths.
  */
-export const deploy = co.wrap(function *(files, cwd, AWSOptions, s3Options, clientOptions = {}) {
+export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, clientOptions = {}) {
   AWSOptions = clone(AWSOptions, true);
   s3Options = clone(s3Options, true);
+  const cwd = options.cwd;
+  const filePrefix = options.filePrefix || '';
 
   AWS.config.update(Object.assign({
     sslEnabled: true
@@ -124,6 +126,6 @@ export const deploy = co.wrap(function *(files, cwd, AWSOptions, s3Options, clie
   var client = new AWS.S3(clientOptions);
 
   yield Promise.all(files.map(function(filePath) {
-    return handleFile(filePath, cwd, client, s3Options);
+    return handleFile(filePath, cwd, filePrefix, client, s3Options);
   }));
 });

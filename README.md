@@ -11,13 +11,31 @@ s3-deploy './dist/**' --cwd './dist/' --region AWS_REGION --bucket SOME_BUCKET_N
 
 Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` with the AWS region of your bucket and `SOME_BUCKET_NAME` with the name of your bucket where file files should end up.
 
-You can also gzip the files before sending them, just add `--gzip` parameter.
+### Optional parameters
+```
+--gzip
+```
+Specifying `--gzip` will gzip all files before sending them.
 
-You can also specify the `Cache-Control: max-age=X` header, where X is the number of seconds given item will be kept in the cache for. Just add `--cache X` parameter. By default this value is undefined.
+```
+--cache X
+```
+Use this parameter to specify the `Cache-Control: max-age=X` header, where X is the number of seconds given item will be kept in the cache for. By default this value is undefined.
 
-You can also specify the `ETag: X` header, where X is either user-defined value for this header, or MD5 of the content. To provide a custom value use `--etag X` parameter. To automatically fill this header with MD5 hash of the file, just use `--etag` parameter without any value. Internally the tool will generate MD5 hash of the content and will set it as the ETag header value. By default this parameter is undefined.
+```
+--etag X
+```
+You can also specify the `ETag: X` header, where X is either user-defined value for this header, or MD5 of the content. To automatically fill this header with MD5 hash of the file, just use `--etag` parameter without any value. Internally the tool will generate MD5 hash of the content and will set it as the ETag header value. By default this parameter is undefined.
 
-You can also specify the `signatureVersion` that should be used by S3 client. To do so, just use `--signatureVersion v4` parameter. Current allowed values are the same as in the constructor of the [S3 JS SDK Client](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property). In the time of writing those docs those values were `v2`, `v3` and `v4`.
+```
+--signatureVersion v4
+```
+You can also specify the `signatureVersion` that should be used by S3 client. Current allowed values are the same as in the constructor of the [S3 JS SDK Client](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property). In the time of writing those docs those values were `v2`, `v3` and `v4`.
+
+```
+--filePrefix
+```
+Use this parameter to specify a file prefix for all your destination files. For example, if you wanted to deploy a versioned history of your project to S3 whenever publishing to npm, you couls use `--filePrefix $npm_package_version` in a script in your project's package.json file.
 
 ## AWS Credentials
 AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file.  More details here:
