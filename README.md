@@ -80,6 +80,11 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.6.0
+
+***API Additions**
+- Adding the ability to specify `filePrefix` 
+
 ### 0.5.2
 
 **Bug fix**
