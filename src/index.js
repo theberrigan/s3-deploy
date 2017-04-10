@@ -54,7 +54,7 @@ co(function *() {
   }));
 
   let cacheControl = [];
-  if (options.cache) cacheControl.push('max-age=' + options.cache);
+  if (Object.keys(options).indexOf('cache') > -1) cacheControl.push('max-age=' + options.cache);
   if (options.immutable) cacheControl.push('immutable');
   cacheControl = cacheControl.length ? cacheControl.join(', ') : undefined;
 
