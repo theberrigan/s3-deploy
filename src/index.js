@@ -47,6 +47,10 @@ co(function *() {
     options.signatureVersion = argv.signatureVersion;
   }
 
+  if(argv.hasOwnProperty('deleteRemoved')) {
+    options.deleteRemoved = argv.deleteRemoved;
+  }
+
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
   const globbedFiles = flatten(argv._.filter(Boolean).map(function(pattern) {
