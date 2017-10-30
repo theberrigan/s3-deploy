@@ -28,7 +28,7 @@ export function upload(client, file, opts, filePrefix, ext) {
     var dest = params.Key;
 
     // Upload the file to s3.
-    client.putObject(params, function(err) {
+    client.putObject(params, function (err) {
       if (err) {
         return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
       }
@@ -37,6 +37,51 @@ export function upload(client, file, opts, filePrefix, ext) {
     });
   });
 }
+
+export function deleteRemoved(client, files, options) {
+
+  const params = {
+    Bucket: options.bucket
+  };
+
+  return new Promise((resolve, reject) => {
+    client.listObjects(params, function (err, data) {
+      if (err) {
+        return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
+      }// an error occurred
+      const s3files = data.Contents.map(item => item.Key);
+      const localFiles = files.map(item => item.substr(options.cwd.length));
+      const toDelete = s3files.filter(item => !localFiles.includes(item));
+
+      if (toDelete.length > 0) {
+
+        console.log('Deleting files: %s', toDelete);
+
+        const params = {
+          Bucket: options.bucket,
+          Delete: {
+            Objects: toDelete.map(item => {
+              return {Key: item};
+            })
+          }
+        };
+
+        client.deleteObjects(params, function (err, data) {
+          if (err) {
+            return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
+          }// an error occurred
+
+
+          return resolve(util.format(MSG.DELETE_SUCCESS, toDelete));
+
+        });
+      } else {
+        console.log('No files to delete.');
+      }
+    });
+  });
+}
+
 
 /**
  * Checks if file is already in the S3 bucket.
@@ -53,7 +98,7 @@ export function sync(client, file, opts, filePrefix) {
       IfUnmodifiedSince: file.stat.mtime
     }, utils.buildBaseParams(file, filePrefix), opts);
 
-    client.headObject(params, function(err) {
+    client.headObject(params, function (err) {
       if (err && (err.statusCode === 304 || err.statusCode === 412)) {
         return reject(util.format(MSG.SKIP_MATCHES, params.Key));
       }
@@ -70,10 +115,10 @@ export function sync(client, file, opts, filePrefix) {
  */
 export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
   var stat = fs.statSync(filepath);
-  if(stat.isFile()) {
+  if (stat.isFile()) {
     let fileContents = yield fs.readFile(filepath, {encoding: null});
 
-    if(gzipFiles) {
+    if (gzipFiles) {
       fileContents = zlib.gzipSync(fileContents);
     }
 
@@ -96,7 +141,7 @@ export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
 export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, s3Options, ext) {
   const fileObject = yield readFile(filePath, cwd, s3Options.ContentEncoding !== undefined);
 
-  if(fileObject !== undefined) {
+  if (fileObject !== undefined) {
     try {
       yield sync(client, fileObject, filePrefix, s3Options);
     } catch (e) {
@@ -120,7 +165,7 @@ export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, 
   const filePrefix = options.filePrefix || '';
 
 
-  if(options.profile) {
+  if (options.profile) {
     var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
     AWS.config.credentials = credentials;
   }
@@ -131,7 +176,11 @@ export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, 
 
   var client = new AWS.S3(clientOptions);
 
-  yield Promise.all(files.map(function(filePath) {
+  yield Promise.all(files.map(function (filePath) {
     return handleFile(filePath, cwd, filePrefix, client, s3Options, options.ext);
   }));
+
+  if(options.deleteRemoved) {
+    deleteRemoved(client, files, options);
+  }
 });
