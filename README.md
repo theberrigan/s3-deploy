@@ -57,6 +57,12 @@ Use this parameter to specify that objects being uploaded will be stored with pr
 ```
 Enables to set the correct content type header when files has no extension. For example, when the s3 bucket is used for webhosting and there is need to access paths like `/about` instead of `/about.html` so its possible to upload file named `about` and set `--ext html`
 
+```
+--deleteRemoved
+```
+
+Removes files in S3, that are not available in the local copy of the directory. Useful to cleanup files that should no longer reside in the remote version.
+
 ## AWS Credentials
 AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file.  More details here:
 http://docs.aws.amazon.com/cli/latest/topic/config-vars.html. Please make sure to define a default in your AWS credentials, this will help prevent a `Missing Credentials` error during deployment.
@@ -99,6 +105,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 - After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 0.7.6
+
+**API Additions**
+
+- Adding he ability to cleanup old files in the remote location during the deployment
 
 ### 0.7.3
 
