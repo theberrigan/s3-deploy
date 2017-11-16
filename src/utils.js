@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-
+import path from 'path';
 import mime from 'mime';
 
 /**
@@ -44,8 +44,7 @@ export function base64Md5(data) {
  *                       removed from the path.
  */
 export function buildBaseParams(file, filePrefix) {
-  var dest = file.path.replace(file.base, '');
-  dest = dest.replace(/^\//, '');
+  var dest = path.basename(file.path);
   if (filePrefix) {
     dest = filePrefix + '/' + dest;
   }
