@@ -44,7 +44,7 @@ export function base64Md5(data) {
  *                       removed from the path.
  */
 export function buildBaseParams(file, filePrefix) {
-  var dest = path.basename(file.path);
+  var dest = path.relative(file.base, file.path).replace(/\\/g,'/');
   if (filePrefix) {
     dest = filePrefix + '/' + dest;
   }
