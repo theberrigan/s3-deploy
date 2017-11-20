@@ -106,6 +106,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.8.0
+
+**API Additions**
+
+- Fix for windows setup.
+
 ### 0.7.6
 
 **API Additions**
