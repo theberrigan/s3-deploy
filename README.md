@@ -112,6 +112,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 0.9.0
+
+**API Additions**
+
+- Addition of the `--index` parameter.
+
 ### 0.8.0
 
 **API Additions**
