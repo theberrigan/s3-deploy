@@ -43,8 +43,12 @@ export function base64Md5(data) {
  *                       being a base path of the file location, with slashes
  *                       removed from the path.
  */
-export function buildBaseParams(file, filePrefix) {
+export function buildBaseParams(file, filePrefix, fileName) {
   var dest = path.relative(file.base, file.path).replace(/\\/g,'/');
+
+  if (fileName) {
+    dest = fileName.replace(/\\/g,'/');
+  }
   if (filePrefix) {
     dest = filePrefix + '/' + dest;
   }
@@ -54,16 +58,50 @@ export function buildBaseParams(file, filePrefix) {
 }
 
 /**
+ * Returns an array of aliases this file should be uploaded as, in the event
+ * the filename matches the index specified.
+ * @param  {String} file  File object, with all its details
+ * @param  {String} index An index file name, which if the filename matches
+ *                        will generate aliases.
+ * @returns {Array} An array of Strings to act as aliases, or null if it's not an index.
+ */
+export function buildIndexes(file, index) {
+
+  // If there's no index specified, there's nothing to do.
+  if (!index) {
+    return Array();
+  }
+
+  // If the filename doesn't match the index, there's nothing to do.
+  if (path.basename(file.path) !== index) {
+    return Array();
+  }
+
+  var dest = path.relative(file.base, file.path).replace(/\\/g,'/');
+
+  // The root object is handled separately on S3.
+  if (path.dirname(dest) === '.') {
+    return Array();
+  }
+
+  // Two aliases: the path name, and the path name with a trailing slash.
+  return new Array(
+    path.dirname(dest),
+    path.dirname(dest) + '/'
+  );
+}
+
+/**
  * Takes a file object, and prepares parameters required during AWS S3 file upload.
  * @param  {Object} file File object, with all it's details.
  * @return {Object}      AWS S3 upload function parameters.
  */
-export function buildUploadParams(file, filePrefix, ext) {
+export function buildUploadParams(file, filePrefix, ext, fileName) {
   var params = Object.assign({
     ContentMD5: base64Md5(file.contents),
     Body: file.contents,
     ContentType: contentType(file.path, ext)
-  }, buildBaseParams(file, filePrefix));
+  }, buildBaseParams(file, filePrefix, fileName));
 
   return params;
 }
