@@ -17,6 +17,7 @@ co(function *() {
     cwd: argv.cwd || '',
     profile: argv.profile,
     gzip: (argv.gzip ? 'gzip' : undefined),
+    index: argv.index || null,
   };
 
   if(argv.hasOwnProperty('filePrefix')) {
@@ -51,6 +52,10 @@ co(function *() {
     options.deleteRemoved = argv.deleteRemoved;
   }
 
+  if(argv.hasOwnProperty('index')) {
+    options.index = argv.index;
+  }
+
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
   const globbedFiles = flatten(argv._.filter(Boolean).map(function(pattern) {
@@ -70,6 +75,7 @@ co(function *() {
   console.log('> E-Tag:', options.etag);
   console.log('> Private:', options.private ? true : false);
   if (options.ext) console.log('> Ext:', options.ext);
+  if (options.index) console.log('> Index:', options.index);
 
   const AWSOptions = {
     region: options.region
