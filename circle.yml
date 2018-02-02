@@ -1,7 +1,7 @@
 ---
   machine:
     node:
-      version: "iojs-v2.3.1"
+      version: "9.4.0"
   deployment:
     production:
       branch: "master"
