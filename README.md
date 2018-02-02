@@ -63,6 +63,12 @@ Enables to set the correct content type header when files has no extension. For 
 
 Removes files in S3, that are not available in the local copy of the directory. Useful to cleanup files that should no longer reside in the remote version.
 
+```
+--index
+```
+
+If a filename in a subdirectory matches the index file, then upload two additional copies of the file: one with the same name as the directory, and one with the name of the directory followed by "/".  This can be used to fake "index.html" on S3 and CloudFront, which normally has no concept of default index files.
+
 ## AWS Credentials
 AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file.  More details here:
 http://docs.aws.amazon.com/cli/latest/topic/config-vars.html. Please make sure to define a default in your AWS credentials, this will help prevent a `Missing Credentials` error during deployment.
