@@ -85,25 +85,38 @@ export function deleteRemoved(client, files, options) {
 
 /**
  * Checks if file is already in the S3 bucket.
- * @param  {Object} client AWS Client object.
- * @param  {Object} file   File details of a file to check.
- * @param  {Object} opts   Object with additional AWS parameters.
- * @return {Promise}       Returns a promise which rejects if file already exists,
- *                         and doesn't need update. Otherwise fulfills.
+ * @param  {Object}  client         AWS Client object.
+ * @param  {Object}  file           File details of a file to check.
+ * @param  {Object}  opts           Object with additional AWS parameters.
+ * @param  {Boolean} preventUpdates Prevent updating the object, even if changed
+ * @return {Promise}                Returns a promise which rejects if file already exists,
+ *                                  and doesn't need update. Otherwise fulfills.
  */
-export function sync(client, file, filePrefix, opts, fileName) {
+export function sync(client, file, filePrefix, opts, preventUpdates, fileName) {
   return new Promise((resolve, reject) => {
-    var params = Object.assign({
-      IfNoneMatch: utils.createMd5Hash(file.contents),
-      IfUnmodifiedSince: file.stat.mtime
-    }, utils.buildBaseParams(file, filePrefix, fileName), opts);
-
-    client.headObject(params, function (err) {
+    var expectedHash = utils.createMd5Hash(file.contents);
+    var params = {
+      IfNoneMatch: expectedHash,
+      Bucket: opts.Bucket
+    };
+    if (!preventUpdates) {
+      params.IfUnmodifiedSince = file.stat.mtime;
+    }
+    Object.assign(params, utils.buildBaseParams(file, filePrefix, fileName));
+    client.headObject(params, function (err, data) {
       if (err && (err.statusCode === 304 || err.statusCode === 412)) {
         return reject(util.format(MSG.SKIP_MATCHES, params.Key));
       }
 
-      resolve();
+      if (preventUpdates && data) {
+        return reject(util.format(MSG.ERR_CHECKSUM, expectedHash, data.ETag, params.Key));
+      }
+
+      if (data || err.statusCode === 404) {
+        return resolve();
+      }
+
+      reject(util.format(MSG.ABORT_UPLOAD, err.code, err.message, params.Key));
     });
   });
 }
@@ -138,17 +151,17 @@ export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
  * checking if file is already in AWS bucket and needs updates,
  * and uploading files that are not there yet, or do need an update.
  */
-export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, s3Options, ext, indexName) {
+export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, s3Options, ext, indexName, preventUpdates) {
   const fileObject = yield readFile(filePath, cwd, s3Options.ContentEncoding !== undefined);
 
   if (fileObject !== undefined) {
     const aliases = utils.buildIndexes(fileObject, indexName);
     try {
-      yield sync(client, fileObject, filePrefix, s3Options);
+      yield sync(client, fileObject, filePrefix, s3Options, preventUpdates);
       if (aliases && aliases.length > 0) {
         for (var i = 0; i < aliases.length; i++) {
           const name = aliases[i];
-          yield sync(client, fileObject, filePrefix, s3Options, name);
+          yield sync(client, fileObject, filePrefix, s3Options, preventUpdates, name);
         }
       }
     } catch (e) {
@@ -190,7 +203,7 @@ export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, 
   var client = new AWS.S3(clientOptions);
 
   yield Promise.all(files.map(function (filePath) {
-    return handleFile(filePath, cwd, filePrefix, client, s3Options, options.ext, options.index);
+    return handleFile(filePath, cwd, filePrefix, client, s3Options, options.ext, options.index, options.preventUpdates);
   }));
 
   if(options.deleteRemoved) {

@@ -23,11 +23,17 @@ Specifying `--gzip` will gzip all files before sending them.
 Use this parameter to specify the `Cache-Control: max-age=X` header, where X is the number of seconds a given item will be kept in the cache for. By default this value is undefined.
 
 ```
---immutable
+--preventUpdates
 ```
-When a page is refreshed, which is an extremely common social media scenario, elements that were previously marked immutable with an HTTP response header do not have to be revalidated with the server. It sets the `Cache-Control: immutable` header - [using-immutable-caching-to-speed-up-the-web](https://hacks.mozilla.org/2017/01/using-immutable-caching-to-speed-up-the-web/)
+Use this parameter to validate that the object either currently does not exist in the bucket, or
+that it already matches the ETag hash and thus is skipped and not uploaded. This effectively ensures that S3 Objects will not be modified. This is useful with the `--immutable` flag.
+```
 
 ```
+--immutable
+```
+When a page is refreshed, which is an extremely common social media scenario, elements that were previously marked immutable with an HTTP response header do not have to be revalidated with the server. It sets the `Cache-Control: immutable` header - [using-immutable-caching-to-speed-up-the-web](https://hacks.mozilla.org/2017/01/using-immutable-caching-to-speed-up-the-web/) This is useful with the `--preventUpdates` flag.
+
 --etag X
 ```
 You can also specify the `ETag: X` header, where X is either user-defined value for this header, or MD5 of the content. To automatically fill this header with MD5 hash of the file, just use `--etag` parameter without any value. Internally the tool will generate MD5 hash of the content and will set it as the ETag header value. By default this parameter is undefined.

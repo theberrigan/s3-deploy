@@ -32,6 +32,10 @@ co(function *() {
     options.immutable = true;
   }
 
+  if(argv.hasOwnProperty('preventUpdates')) {
+    options.preventUpdates = true;
+  }
+
   if(argv.hasOwnProperty('etag')) {
     options.etag = argv.etag;
   }
@@ -71,6 +75,7 @@ co(function *() {
   console.log('> Target S3 bucket: %s (%s region)', options.bucket, options.region);
   console.log('> Target file prefix: %s', options.filePrefix);
   console.log('> Gzip:', options.gzip);
+  console.log('> Prevent Updates:', options.preventUpdates);
   console.log('> Cache-Control:', cacheControl);
   console.log('> E-Tag:', options.etag);
   console.log('> Private:', options.private ? true : false);
@@ -107,7 +112,7 @@ co(function *() {
   return yield deploy(globbedFiles, options, AWSOptions, s3Options, s3ClientOptions);
 })
 .then(() => {
-  console.log('All files uploaded.');
+  console.log('Upload finished');
 })
 .catch(err => {
   if (err.stack) {
