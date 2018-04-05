@@ -8,10 +8,10 @@ NodeJS bash utility for deploying files to Amazon S3
 ```
 s3-deploy './dist/**' --cwd './dist/' --region AWS_REGION --bucket SOME_BUCKET_NAME
 ```
-
 Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` with the AWS region of your bucket and `SOME_BUCKET_NAME` with the name of your bucket where file files should end up.
 
 ### Optional parameters
+
 ```
 --gzip
 ```
@@ -27,13 +27,14 @@ Use this parameter to specify the `Cache-Control: max-age=X` header, where X is 
 ```
 Use this parameter to validate that the object either currently does not exist in the bucket, or
 that it already matches the ETag hash and thus is skipped and not uploaded. This effectively ensures that S3 Objects will not be modified. This is useful with the `--immutable` flag.
-```
+
 
 ```
 --immutable
 ```
 When a page is refreshed, which is an extremely common social media scenario, elements that were previously marked immutable with an HTTP response header do not have to be revalidated with the server. It sets the `Cache-Control: immutable` header - [using-immutable-caching-to-speed-up-the-web](https://hacks.mozilla.org/2017/01/using-immutable-caching-to-speed-up-the-web/) This is useful with the `--preventUpdates` flag.
 
+```
 --etag X
 ```
 You can also specify the `ETag: X` header, where X is either user-defined value for this header, or MD5 of the content. To automatically fill this header with MD5 hash of the file, just use `--etag` parameter without any value. Internally the tool will generate MD5 hash of the content and will set it as the ETag header value. By default this parameter is undefined.
@@ -66,47 +67,46 @@ Enables to set the correct content type header when files has no extension. For 
 ```
 --deleteRemoved
 ```
-
 Removes files in S3, that are not available in the local copy of the directory. Useful to cleanup files that should no longer reside in the remote version.
 
 ```
 --index
 ```
-
 If a filename in a subdirectory matches the index file, then upload two additional copies of the file: one with the same name as the directory, and one with the name of the directory followed by "/".  This can be used to fake "index.html" on S3 and CloudFront, which normally has no concept of default index files.
 
 ## AWS Credentials
+
 AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file.  More details here:
 http://docs.aws.amazon.com/cli/latest/topic/config-vars.html. Please make sure to define a default in your AWS credentials, this will help prevent a `Missing Credentials` error during deployment.
 
 ## Commands
 
 ### Production build
+
 ```
 npm run release
 ```
-
 Runs eslint validation, runs all unit tests.
 
 ### Run all tests
+
 ```
 npm test
 ```
-
 Invokes all unit tests in the project.
 
 ### Generage coverage report
+
 ```
 npm run coverage
 ```
-
 Generates unit test coverage report.
 
 ### Run linting
+
 ```
 npm run lint
 ```
-
 Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Releasing
