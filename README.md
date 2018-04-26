@@ -5,7 +5,7 @@ NodeJS bash utility for deploying files to Amazon S3
 ## Usage
 
 ```
-s3-deploy './dist/**' --cwd './dist/' --region AWS_REGION --bucket SOME_BUCKET_NAME --distId CF_DIST_ID '/index.*'
+s3-deploy './dist/**' --cwd './dist/' --region AWS_REGION --bucket SOME_BUCKET_NAME --distId CF_DIST_ID --invalidate '/INV_PATH_1 /INV_PATH_2'
 ```
 
 Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` with the AWS region of your bucket and `SOME_BUCKET_NAME` with the name of your bucket where files should end up. It's a common scenario to invalidate files in CloudFront distribution, just pass distribution ID to `--distId` to invalidate everything.
@@ -145,6 +145,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 * After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 0.11.0
+
+**API Additions**
+
+* Added a new feature to invalidate paths in CloudFront using `--distId` (distribution id) and `--invalidate` (paths to invalidate).
 
 ### 0.10.0
 
