@@ -7,6 +7,7 @@ import clone from 'lodash/lang/clone';
 import fs from 'co-fs-extra';
 import co from 'co';
 
+import  { invalidate } from './cloudfront';
 import * as utils from './utils';
 import * as MSG from './MSG';
 
@@ -184,7 +185,7 @@ export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, 
  * Entry point, creates AWS client, prepares AWS options,
  * and handles all provided paths.
  */
-export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, clientOptions = {}) {
+export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, clientOptions = {}, cfOptions) {
   AWSOptions = clone(AWSOptions, true);
   s3Options = clone(s3Options, true);
   const cwd = options.cwd;
@@ -205,6 +206,10 @@ export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, 
   yield Promise.all(files.map(function (filePath) {
     return handleFile(filePath, cwd, filePrefix, client, s3Options, options.ext, options.index, options.preventUpdates);
   }));
+
+  if (cfOptions.distId) {
+    invalidate(cfOptions.distId, cfOptions.invalidate);
+  }
 
   if(options.deleteRemoved) {
     deleteRemoved(client, files, options);

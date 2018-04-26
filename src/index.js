@@ -60,6 +60,12 @@ co(function *() {
     options.index = argv.index;
   }
 
+
+  if(argv.hasOwnProperty('distId')) {
+    options.distId = argv.distId;
+    options.invalidate = argv.invalidate;
+  }
+
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
   const globbedFiles = flatten(argv._.filter(Boolean).map(function(pattern) {
@@ -72,15 +78,20 @@ co(function *() {
   cacheControl = cacheControl.length ? cacheControl.join(', ') : undefined;
 
   console.log('Deploying files: %s', globbedFiles);
-  console.log('> Target S3 bucket: %s (%s region)', options.bucket, options.region);
-  console.log('> Target file prefix: %s', options.filePrefix);
-  console.log('> Gzip:', options.gzip);
-  console.log('> Prevent Updates:', options.preventUpdates);
-  console.log('> Cache-Control:', cacheControl);
-  console.log('> E-Tag:', options.etag);
-  console.log('> Private:', options.private ? true : false);
+  console.log('► Target S3 bucket: %s (%s region)', options.bucket, options.region);
+  if (options.filePrefix) console.log('► Target file prefix: %s', options.filePrefix);
+  if (options.gzip) console.log('► Gzip:', options.gzip);
+  if (options.preventUpdates) console.log('► Prevent Updates:', options.preventUpdates);
+  if (cacheControl) console.log('► Cache-Control:', cacheControl);
+  if (options.etag) console.log('► E-Tag:', options.etag);
+  console.log('► Private:', options.private ? true : false);
   if (options.ext) console.log('> Ext:', options.ext);
   if (options.index) console.log('> Index:', options.index);
+  if (options.distId) {
+    console.log('▼ CloudFront');
+    console.log('  ▹ Distribution ID:', options.distId);
+    if (options.invalidate) console.log('  ▹ Invalidate files:', options.invalidate);
+  }
 
   const AWSOptions = {
     region: options.region
@@ -108,8 +119,15 @@ co(function *() {
     s3ClientOptions.signatureVersion = options.signatureVersion;
   }
 
+  const cfOptions = {};
+
+  if (options.hasOwnProperty('distId')) {
+    cfOptions.distId = options.distId;
+    cfOptions.invalidate = options.invalidate;
+  }
+
   // Starts the deployment of all found files.
-  return yield deploy(globbedFiles, options, AWSOptions, s3Options, s3ClientOptions);
+  return yield deploy(globbedFiles, options, AWSOptions, s3Options, s3ClientOptions, cfOptions);
 })
 .then(() => {
   console.log('Upload finished');
