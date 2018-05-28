@@ -146,6 +146,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 1.0.0
+
+**No changes**
+
+The v0.11 re-published to follow stricter SemVer.
+
 ### 0.11.0
 
 **API Additions**
