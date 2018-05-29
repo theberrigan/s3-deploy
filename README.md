@@ -16,7 +16,7 @@ Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` wi
 --gzip
 ```
 
-Specifying `--gzip` will gzip all files before sending them.
+Specifying `--gzip` will gzip all files before sending them to S3, and adds appropriate `Content-Encoding: gzip` metadata attribute on uploaded elements in S3, so that when they are opened in the browser, the browser knows to decompress them first before displaying.
 
 ```
 --cache X
