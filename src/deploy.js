@@ -122,17 +122,28 @@ export function sync(client, file, filePrefix, opts, preventUpdates, fileName) {
   });
 }
 
+export function shouldBeZipped(filepath, gzip) {
+  if (Array.isArray(gzip)) {
+    const ext = path.extname(filepath); // ext would be ".js" or alike
+    if (ext && gzip.includes(ext.substr(1))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 /**
  * Checks if the provided path is a file or directory.
  * If it is a file, it returns file details object.
  * Otherwise it returns undefined.
  */
-export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
+export const readFile = co.wrap(function *(filepath, cwd, gzip) {
   var stat = fs.statSync(filepath);
   if (stat.isFile()) {
     let fileContents = yield fs.readFile(filepath, {encoding: null});
 
-    if (gzipFiles) {
+    if (shouldBeZipped(filepath, gzip)) {
       fileContents = zlib.gzipSync(fileContents);
     }
 
@@ -153,7 +164,7 @@ export const readFile = co.wrap(function *(filepath, cwd, gzipFiles) {
  * and uploading files that are not there yet, or do need an update.
  */
 export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, s3Options, ext, indexName, preventUpdates) {
-  const fileObject = yield readFile(filePath, cwd, s3Options.ContentEncoding !== undefined);
+  const fileObject = yield readFile(filePath, cwd, s3Options.gzip);
 
   if (fileObject !== undefined) {
     const aliases = utils.buildIndexes(fileObject, indexName);

@@ -16,9 +16,12 @@ co(function *() {
     region: argv.r || argv.region || 'us-east-1',
     cwd: argv.cwd || '',
     profile: argv.profile,
-    gzip: (argv.gzip ? 'gzip' : undefined),
     index: argv.index || null,
   };
+
+  if(argv.hasOwnProperty('gzip')) {
+    options.gzip = (typeof argv.gzip === 'string' ? argv.gzip : 'xml,html,htm,js,css,ttf,otf,svg,txt').split(',');
+  }
 
   if(argv.hasOwnProperty('filePrefix')) {
     options.filePrefix = argv.filePrefix;
