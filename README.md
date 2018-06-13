@@ -13,10 +13,10 @@ Deploys files found by the `./dist/**` glob patten to S3. Change `AWS_REGION` wi
 ### Optional parameters
 
 ```
---gzip [EXTENSIONS="xml,html,htm,js,css,ttf,otf,svg,txt"]
+--gzip [ETX,...]
 ```
 
-Specifying `--gzip` will gzip all files matching the file extensions before sending them to S3, and adds appropriate `Content-Encoding: gzip` metadata attribute on uploaded elements in S3, so that when they are opened in the browser, the browser knows to decompress them first before displaying. If extensions list is missing the default list is `xml,html,htm,js,css,ttf,otf,svg,txt`.
+Specifying `--gzip` will gzip all files before sending them to S3, and adds appropriate `Content-Encoding: gzip` metadata attribute on uploaded elements in S3, so that when they are opened in the browser, the browser knows to decompress them first before displaying. You can specify the list of file extensions to gzip, e.g. `--gzip xml,html,htm,js,css,ttf,otf,svg,txt`.
 
 ```
 --cache X

@@ -20,7 +20,7 @@ co(function *() {
   };
 
   if(argv.hasOwnProperty('gzip')) {
-    options.gzip = (typeof argv.gzip === 'string' ? argv.gzip : 'xml,html,htm,js,css,ttf,otf,svg,txt').split(',');
+    options.gzip = typeof argv.gzip === 'string' ? argv.gzip.split(',') : argv.gzip;
   }
 
   if(argv.hasOwnProperty('filePrefix')) {
@@ -102,7 +102,6 @@ co(function *() {
 
   const s3Options = {
     Bucket: options.bucket,
-    ContentEncoding: options.gzip,
     CacheControl: cacheControl
   };
 

@@ -123,6 +123,8 @@ export function sync(client, file, filePrefix, opts, preventUpdates, fileName) {
 }
 
 export function shouldBeZipped(filepath, gzip) {
+  if (gzip === true) return true;
+
   if (Array.isArray(gzip)) {
     const ext = path.extname(filepath); // ext would be ".js" or alike
     if (ext && gzip.includes(ext.substr(1))) {
