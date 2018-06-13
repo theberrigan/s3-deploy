@@ -146,6 +146,12 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 1.1.0
+
+**API Additions**
+
+* Pass file extensions to `--gzip` to zip only the given list. E.g. `--gzip xml,html,htm,js,css,ttf,otf,svg,txt`.
+
 ### 1.0.0
 
 **No changes**
