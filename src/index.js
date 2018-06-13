@@ -123,7 +123,7 @@ co(function *() {
 
   if (options.hasOwnProperty('distId')) {
     cfOptions.distId = options.distId;
-    cfOptions.invalidate = options.invalidate;
+    cfOptions.invalidate = options.invalidate.split(' ');
   }
 
   // Starts the deployment of all found files.
