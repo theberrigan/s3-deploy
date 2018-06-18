@@ -3,7 +3,6 @@ import path from 'path';
 import zlib from 'zlib';
 
 import AWS from 'aws-sdk';
-import clone from 'lodash/lang/clone';
 import fs from 'co-fs-extra';
 import co from 'co';
 
@@ -165,11 +164,11 @@ export const readFile = co.wrap(function *(filepath, cwd, gzip) {
  * checking if file is already in AWS bucket and needs updates,
  * and uploading files that are not there yet, or do need an update.
  */
-export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, s3Options, ext, indexName, preventUpdates) {
+export const handleFile = co.wrap(function *(filePath, client, s3Options, {filePrefix, cwd, ext, index, preventUpdates}) {
   const fileObject = yield readFile(filePath, cwd, s3Options.gzip);
 
   if (fileObject !== undefined) {
-    const aliases = utils.buildIndexes(fileObject, indexName);
+    const aliases = utils.buildIndexes(fileObject, index);
     try {
       yield sync(client, fileObject, filePrefix, s3Options, preventUpdates);
       if (aliases && aliases.length > 0) {
@@ -198,33 +197,50 @@ export const handleFile = co.wrap(function *(filePath, cwd, filePrefix, client, 
  * Entry point, creates AWS client, prepares AWS options,
  * and handles all provided paths.
  */
-export const deploy = co.wrap(function *(files, options, AWSOptions, s3Options, clientOptions = {}, cfOptions) {
-  AWSOptions = clone(AWSOptions, true);
-  s3Options = clone(s3Options, true);
-  const cwd = options.cwd;
-  const filePrefix = options.filePrefix || '';
-
-
-  if (options.profile) {
-    var credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
-    AWS.config.credentials = credentials;
-  }
-
+export const deploy = co.wrap(function *(options) {
+  const AWSOptions = {
+    region: options.region
+  };
   AWS.config.update(Object.assign({
     sslEnabled: true
   }, AWSOptions));
+  if (options.profile) {
+    AWS.config.credentials = new AWS.SharedIniFileCredentials({profile: options.profile});
+  }
 
-  var client = new AWS.S3(clientOptions);
+  const s3ClientOptions = {};
+  if (options.hasOwnProperty('signatureVersion')) {
+    s3ClientOptions.signatureVersion = options.signatureVersion;
+  }
+  var client = new AWS.S3(s3ClientOptions);
 
-  yield Promise.all(files.map(function (filePath) {
-    return handleFile(filePath, cwd, filePrefix, client, s3Options, options.ext, options.index, options.preventUpdates);
+  const s3Options = {
+    Bucket: options.bucket,
+    CacheControl: options.cacheControl
+  };
+  if (options.hasOwnProperty('etag')) {
+    s3Options.Metadata = {
+      ETag: options.etag
+    };
+  }
+  if (options.private) {
+    s3Options.ACL = 'private';
+  }
+
+  yield Promise.all(options.globbedFiles.map(function (filePath) {
+    return handleFile(filePath, client, s3Options, options);
   }));
 
+  const cfOptions = {};
+  if (options.hasOwnProperty('distId')) {
+    cfOptions.distId = options.distId;
+    cfOptions.invalidate = options.invalidate;
+  }
   if (cfOptions.distId) {
     invalidate(cfOptions.distId, cfOptions.invalidate);
   }
 
   if(options.deleteRemoved) {
-    deleteRemoved(client, files, options);
+    deleteRemoved(client, options.globbedFiles, options);
   }
 });

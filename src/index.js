@@ -6,9 +6,9 @@ import co from 'co';
 
 import { deploy } from './deploy';
 
-co(function *() {
+export function parseCliArgsToOptions(processArgv = process.argv) {
   // Get arguments that were passed from the command line.
-  const argv = minimist(process.argv.slice(2));
+  const argv = minimist(processArgv.slice(2));
 
   // Create options object, based on command line arguments.
   const options = {
@@ -24,7 +24,7 @@ co(function *() {
   }
 
   if(argv.hasOwnProperty('filePrefix')) {
-    options.filePrefix = argv.filePrefix;
+    options.filePrefix = argv.filePrefix || '';
   }
 
   if(argv.hasOwnProperty('cache')) {
@@ -71,21 +71,25 @@ co(function *() {
 
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
-  const globbedFiles = flatten(argv._.filter(Boolean).map(function(pattern) {
+  options.globbedFiles = flatten(argv._.filter(Boolean).map(function(pattern) {
     return glob.sync(pattern);
   }));
 
   let cacheControl = [];
   if (options.hasOwnProperty('cache')) cacheControl.push('max-age=' + options.cache);
   if (options.immutable) cacheControl.push('immutable');
-  cacheControl = cacheControl.length ? cacheControl.join(', ') : undefined;
+  options.cacheControl = cacheControl.length ? cacheControl.join(', ') : undefined;
 
-  console.log('Deploying files: %s', globbedFiles);
+  return options;
+}
+
+function printOptions(options) {
+  console.log('Deploying files: %s', options.globbedFiles);
   console.log('► Target S3 bucket: %s (%s region)', options.bucket, options.region);
   if (options.filePrefix) console.log('► Target file prefix: %s', options.filePrefix);
   if (options.gzip) console.log('► Gzip:', options.gzip);
   if (options.preventUpdates) console.log('► Prevent Updates:', options.preventUpdates);
-  if (cacheControl) console.log('► Cache-Control:', cacheControl);
+  if (options.cacheControl) console.log('► Cache-Control:', options.cacheControl);
   if (options.etag) console.log('► E-Tag:', options.etag);
   console.log('► Private:', options.private ? true : false);
   if (options.ext) console.log('> Ext:', options.ext);
@@ -95,41 +99,14 @@ co(function *() {
     console.log('  ▹ Distribution ID:', options.distId);
     if (options.invalidate) console.log('  ▹ Invalidate files:', options.invalidate);
   }
+}
 
-  const AWSOptions = {
-    region: options.region
-  };
-
-  const s3Options = {
-    Bucket: options.bucket,
-    CacheControl: cacheControl
-  };
-
-  if(options.hasOwnProperty('etag')) {
-    s3Options.Metadata = {
-      ETag: options.etag
-    };
-  }
-
-  if(options.private) {
-    s3Options.ACL = 'private';
-  }
-
-  const s3ClientOptions = {};
-
-  if(options.hasOwnProperty('signatureVersion')) {
-    s3ClientOptions.signatureVersion = options.signatureVersion;
-  }
-
-  const cfOptions = {};
-
-  if (options.hasOwnProperty('distId')) {
-    cfOptions.distId = options.distId;
-    cfOptions.invalidate = options.invalidate;
-  }
+co(function *() {
+  const options = parseCliArgsToOptions();
+  printOptions(options);
 
   // Starts the deployment of all found files.
-  return yield deploy(globbedFiles, options, AWSOptions, s3Options, s3ClientOptions, cfOptions);
+  return yield deploy(options);
 })
 .then(() => {
   console.log('Upload finished');
