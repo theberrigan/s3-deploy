@@ -139,12 +139,12 @@ export function shouldBeZipped(filepath, gzip) {
  * If it is a file, it returns file details object.
  * Otherwise it returns undefined.
  */
-export const readFile = co.wrap(function *(filepath, cwd, gzip) {
+export const readFile = co.wrap(function *(filepath, cwd, shouldGzip) {
   var stat = fs.statSync(filepath);
   if (stat.isFile()) {
     let fileContents = yield fs.readFile(filepath, {encoding: null});
 
-    if (shouldBeZipped(filepath, gzip)) {
+    if (shouldGzip) {
       fileContents = zlib.gzipSync(fileContents);
     }
 
@@ -164,17 +164,19 @@ export const readFile = co.wrap(function *(filepath, cwd, gzip) {
  * checking if file is already in AWS bucket and needs updates,
  * and uploading files that are not there yet, or do need an update.
  */
-export const handleFile = co.wrap(function *(filePath, client, s3Options, {filePrefix, cwd, ext, index, preventUpdates}) {
-  const fileObject = yield readFile(filePath, cwd, s3Options.gzip);
+export const handleFile = co.wrap(function *(filePath, s3Client, s3UploadOpts, {filePrefix, cwd, ext, index, preventUpdates}) {
+  const s3UploadOptions = {...s3UploadOpts};
+  if (shouldBeZipped(filePath, s3UploadOptions.gzip)) s3UploadOptions.ContentEncoding = 'gzip';
+  const fileObject = yield readFile(filePath, cwd, s3UploadOptions.ContentEncoding);
 
   if (fileObject !== undefined) {
     const aliases = utils.buildIndexes(fileObject, index);
     try {
-      yield sync(client, fileObject, filePrefix, s3Options, preventUpdates);
+      yield sync(s3Client, fileObject, filePrefix, s3UploadOptions, preventUpdates);
       if (aliases && aliases.length > 0) {
         for (var i = 0; i < aliases.length; i++) {
           const name = aliases[i];
-          yield sync(client, fileObject, filePrefix, s3Options, preventUpdates, name);
+          yield sync(s3Client, fileObject, filePrefix, s3UploadOptions, preventUpdates, name);
         }
       }
     } catch (e) {
@@ -182,11 +184,11 @@ export const handleFile = co.wrap(function *(filePath, client, s3Options, {fileP
       return;
     }
 
-    const fileUploadStatus = yield upload(client, fileObject, s3Options, filePrefix, ext);
+    const fileUploadStatus = yield upload(s3Client, fileObject, s3UploadOptions, filePrefix, ext);
     if (aliases && aliases.length > 0) {
       for (var i = 0; i < aliases.length; i++) {
         const name = aliases[i];
-        yield upload(client, fileObject, s3Options, filePrefix, ext, name);
+        yield upload(s3Client, fileObject, s3UploadOptions, filePrefix, ext, name);
       }
     }
     console.log(fileUploadStatus);
@@ -212,23 +214,23 @@ export const deploy = co.wrap(function *(options) {
   if (options.hasOwnProperty('signatureVersion')) {
     s3ClientOptions.signatureVersion = options.signatureVersion;
   }
-  var client = new AWS.S3(s3ClientOptions);
+  var s3Client = new AWS.S3(s3ClientOptions);
 
-  const s3Options = {
+  const s3UploadOptions = {
     Bucket: options.bucket,
     CacheControl: options.cacheControl
   };
   if (options.hasOwnProperty('etag')) {
-    s3Options.Metadata = {
+    s3UploadOptions.Metadata = {
       ETag: options.etag
     };
   }
   if (options.private) {
-    s3Options.ACL = 'private';
+    s3UploadOptions.ACL = 'private';
   }
 
   yield Promise.all(options.globbedFiles.map(function (filePath) {
-    return handleFile(filePath, client, s3Options, options);
+    return handleFile(filePath, s3Client, s3UploadOptions, options);
   }));
 
   const cfOptions = {};
@@ -241,6 +243,6 @@ export const deploy = co.wrap(function *(options) {
   }
 
   if(options.deleteRemoved) {
-    deleteRemoved(client, options.globbedFiles, options);
+    deleteRemoved(s3Client, options.globbedFiles, options);
   }
 });
