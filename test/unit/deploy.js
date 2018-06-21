@@ -45,10 +45,36 @@ describe('#handleFile()', () => {
         cb(null, {});
       },
       putObject(params, cb) {
+        expect(params).to.have.property('ACL', 'public-read');
+        expect(params).to.have.property('Bucket', 'my-bucket');
+        expect(params).to.not.have.property('ContentEncoding');
+        expect(params).to.have.property('ContentType', 'application/javascript; charset=UTF-8');
+        expect(params).to.have.property('Key', 'deploy.js');
         cb(null, {});
       }
     };
 
     handleFile(__filename, s3Client, { Bucket: 'my-bucket' }, { cwd: __dirname, console }).catch(done);
+  });
+
+  it('should upload gzipped file', done => {
+    const console = {
+      log(msg) {
+        expect(msg).to.equal('Uploaded: my-bucket/deploy.js');
+        done();
+      },
+      error: done
+    };
+    const s3Client = {
+      headObject(params, cb) {
+        cb(null, {});
+      },
+      putObject(params, cb) {
+        expect(params).to.have.property('ContentEncoding', 'gzip');
+        cb(null, {});
+      }
+    };
+
+    handleFile(__filename, s3Client, { Bucket: 'my-bucket', gzip: true }, { cwd: __dirname, console }).catch(done);
   });
 });
