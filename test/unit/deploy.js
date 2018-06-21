@@ -1,9 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const { shouldBeZipped } = require('../../src/deploy');
+const { shouldBeZipped, handleFile } = require('../../src/deploy');
 
-describe('#shouldBeZipped()', async () => {
+describe('#shouldBeZipped()', () => {
   it('should return true for all if --gzip', () => {
     const gzip = true;
     expect(shouldBeZipped('/path/file.js', gzip)).to.equal(true);
@@ -28,5 +28,27 @@ describe('#shouldBeZipped()', async () => {
     expect(shouldBeZipped('/path/file.mp4', gzip)).to.equal(false);
     expect(shouldBeZipped('/path/file.js.mp4', gzip)).to.equal(false);
     expect(shouldBeZipped('/path/file.', gzip)).to.equal(false);
+  });
+});
+
+describe('#handleFile()', () => {
+  it('should upload file', done => {
+    const console = {
+      log(msg) {
+        expect(msg).to.equal('Uploaded: my-bucket/deploy.js');
+        done();
+      },
+      error: done
+    };
+    const s3Client = {
+      headObject(params, cb) {
+        cb(null, {});
+      },
+      putObject(params, cb) {
+        cb(null, {});
+      }
+    };
+
+    handleFile(__filename, s3Client, { Bucket: 'my-bucket' }, { cwd: __dirname, console }).catch(done);
   });
 });
