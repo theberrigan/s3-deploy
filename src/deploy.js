@@ -164,9 +164,9 @@ export const readFile = co.wrap(function *(filepath, cwd, shouldGzip) {
  * checking if file is already in AWS bucket and needs updates,
  * and uploading files that are not there yet, or do need an update.
  */
-export const handleFile = co.wrap(function *(filePath, s3Client, s3UploadOpts, {filePrefix, cwd, ext, index, preventUpdates, console}) {
+export const handleFile = co.wrap(function *(filePath, s3Client, s3UploadOpts, {filePrefix, cwd, ext, gzip, index, preventUpdates, console}) {
   const s3UploadOptions = {...s3UploadOpts};
-  if (shouldBeZipped(filePath, s3UploadOptions.gzip)) s3UploadOptions.ContentEncoding = 'gzip';
+  if (shouldBeZipped(filePath, gzip)) s3UploadOptions.ContentEncoding = 'gzip';
   const fileObject = yield readFile(filePath, cwd, s3UploadOptions.ContentEncoding);
 
   if (fileObject !== undefined) {
