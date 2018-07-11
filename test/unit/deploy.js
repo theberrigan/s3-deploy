@@ -75,6 +75,6 @@ describe('#handleFile()', () => {
       }
     };
 
-    handleFile(__filename, s3Client, { Bucket: 'my-bucket', gzip: true }, { cwd: __dirname, console }).catch(done);
+    handleFile(__filename, s3Client, { Bucket: 'my-bucket' }, { cwd: __dirname, console, gzip: true }).catch(done);
   });
 });
