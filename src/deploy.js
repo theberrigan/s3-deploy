@@ -41,7 +41,7 @@ export function upload(client, file, opts, filePrefix, ext, fileName) {
 const listAllKeys = (client, params, out = []) => new Promise((resolve, reject) => {
   client.listObjectsV2(params).promise()
     .then(({Contents, IsTruncated, NextContinuationToken}) => {
-      console.log('listObjects IsTruncated: %s', IsTruncated)
+      console.log('listObjects IsTruncated: %s', IsTruncated);
       const s3files = Contents.map(item => item.Key);
       out = out.concat(s3files);
       !IsTruncated ? resolve(out) : resolve(listAllKeys(client, Object.assign(params, {ContinuationToken: NextContinuationToken}), out));
@@ -73,7 +73,7 @@ export function deleteRemoved(client, files, options) {
           for(i=0, j=toDelete.length; i < j; i += chunk) {
             const delObjs = toDelete.slice(0, i+chunk).map(item => {
               return {Key: item};
-            })
+            });
 
             const params = {
               Bucket: options.bucket,
@@ -84,7 +84,7 @@ export function deleteRemoved(client, files, options) {
 
             client.deleteObjects(params, function (err, data) {
               if (err) {
-                console.log('Error while Deleting: ', err)
+                console.log('Error while Deleting: ', err);
                 return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
               }// an error occurred
 
@@ -95,7 +95,7 @@ export function deleteRemoved(client, files, options) {
           console.log('No files to delete.');
         }
       })
-      .catch(console.log)
+      .catch(console.log);
   });
 }
 
