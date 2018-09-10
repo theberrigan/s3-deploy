@@ -2,6 +2,12 @@
 
 NodeJS bash utility for deploying files to Amazon S3
 
+## Changes in this fork:
+
+- Support delete objects recursively for option `--deleteRemoved`
+- Reason: S3 listObjects only limit `MaxKeys: 1000`, so in case your deploy contains many files (much more than 1000), it may cause unexpected result (usually, it cannot delete all the necessary files)
+- This fork make sure all files in S3 will be `--deleteRemoved` if they are not matched with local files.
+
 ## Usage
 
 ```

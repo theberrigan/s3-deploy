@@ -38,6 +38,17 @@ export function upload(client, file, opts, filePrefix, ext, fileName) {
   });
 }
 
+const listAllKeys = (client, params, out = []) => new Promise((resolve, reject) => {
+  client.listObjectsV2(params).promise()
+    .then(({Contents, IsTruncated, NextContinuationToken}) => {
+      console.log('listObjects IsTruncated: %s', IsTruncated)
+      const s3files = Contents.map(item => item.Key);
+      out = out.concat(s3files);
+      !IsTruncated ? resolve(out) : resolve(listAllKeys(client, Object.assign(params, {ContinuationToken: NextContinuationToken}), out));
+    })
+    .catch(reject);
+});
+
 export function deleteRemoved(client, files, options) {
 
   const params = {
@@ -45,40 +56,46 @@ export function deleteRemoved(client, files, options) {
   };
 
   return new Promise((resolve, reject) => {
-    client.listObjects(params, function (err, data) {
-      if (err) {
-        return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
-      }// an error occurred
-      const s3files = data.Contents.map(item => item.Key);
-      const localFiles = files.map(item => item.substr(options.cwd.length));
-      const toDelete = s3files.filter(item => !localFiles.includes(item));
 
-      if (toDelete.length > 0) {
+    listAllKeys(client, params)
+      .then(allKeys => {
+        console.log('allKeys length: %s', allKeys.length);
+        const localFiles = files.map(item => item.substr(options.cwd.length));
+        console.log('localFiles length: %s', localFiles.length);
+        const toDelete = allKeys.filter(item => !localFiles.includes(item));
 
-        console.log('Deleting files: %s', toDelete);
+        if (toDelete.length > 0) {
 
-        const params = {
-          Bucket: options.bucket,
-          Delete: {
-            Objects: toDelete.map(item => {
+          console.log('Deleting files: %s', toDelete);
+
+          let i, j, tempDeletes;
+          const chunk = 1000;
+          for(i=0, j=toDelete.length; i < j; i += chunk) {
+            const delObjs = toDelete.slice(0, i+chunk).map(item => {
               return {Key: item};
             })
+
+            const params = {
+              Bucket: options.bucket,
+              Delete: {
+                Objects: delObjs
+              }
+            };
+
+            client.deleteObjects(params, function (err, data) {
+              if (err) {
+                console.log('Error while Deleting: ', err)
+                return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
+              }// an error occurred
+
+              return resolve(util.format(MSG.DELETE_SUCCESS, toDelete));
+            });
           }
-        };
-
-        client.deleteObjects(params, function (err, data) {
-          if (err) {
-            return reject(util.format(MSG.ERR_UPLOAD, err, err.stack));
-          }// an error occurred
-
-
-          return resolve(util.format(MSG.DELETE_SUCCESS, toDelete));
-
-        });
-      } else {
-        console.log('No files to delete.');
-      }
-    });
+        } else {
+          console.log('No files to delete.');
+        }
+      })
+      .catch(console.log)
   });
 }
 
