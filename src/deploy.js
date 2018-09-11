@@ -71,14 +71,16 @@ export function deleteRemoved(client, files, options) {
           let i, j, tempDeletes;
           const chunk = 1000;
           for(i=0, j=toDelete.length; i < j; i += chunk) {
-            const delObjs = toDelete.slice(0, i+chunk).map(item => {
+            tempDeletes = toDelete.slice(i, i+chunk).map(item => {
               return {Key: item};
             });
+
+            console.log('Deleting chunk: %s', tempDeletes.length);
 
             const params = {
               Bucket: options.bucket,
               Delete: {
-                Objects: delObjs
+                Objects: tempDeletes
               }
             };
 
