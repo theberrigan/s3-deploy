@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 import glob from 'glob';
-import flatten from 'lodash/array/flatten';
+import _ from 'lodash';
 import minimist from 'minimist';
 import co from 'co';
 
@@ -71,7 +71,7 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
 
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
-  options.globbedFiles = flatten(argv._.filter(Boolean).map(function(pattern) {
+  options.globbedFiles = _.flatten(argv._.filter(Boolean).map(function(pattern) {
     return glob.sync(pattern);
   }));
 

@@ -146,6 +146,13 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 1.1.4
+
+**Build process cleanup & vinerability fixes**
+
+- Updated build process to use `prepublishOnly`,
+- Updated dependencies to fix vunerability issues.
+
 ### 1.1.2
 
 **Delete S3 objects recursively**
