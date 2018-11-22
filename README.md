@@ -146,6 +146,10 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 1.1.5
+
+* Bug fix for `invalidate` flag. https://github.com/import-io/s3-deploy/pull/79
+
 ### 1.1.4
 
 **Build process cleanup & vinerability fixes**
