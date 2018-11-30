@@ -63,10 +63,13 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
     options.index = argv.index;
   }
 
-
   if(argv.hasOwnProperty('distId')) {
     options.distId = argv.distId;
     options.invalidate = argv.invalidate;
+  }
+
+  if(argv.hasOwnProperty('deleteExclude')) {
+    options.deleteExclude = glob.sync(argv.deleteExclude);
   }
 
   // Get paths of all files from the glob pattern(s) that were passed as the
@@ -94,6 +97,12 @@ function printOptions(options) {
   console.log('► Private:', options.private ? true : false);
   if (options.ext) console.log('> Ext:', options.ext);
   if (options.index) console.log('> Index:', options.index);
+  if (options.deleteRemoved) {
+    console.log('► Deleting removed files');
+    if (options.deleteExclude) {
+      console.log('  ▹ Excluding from delete: %s', options.deleteExclude);
+    }
+  }
   if (options.distId) {
     console.log('▼ CloudFront');
     console.log('  ▹ Distribution ID:', options.distId);

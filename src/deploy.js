@@ -62,7 +62,12 @@ export function deleteRemoved(client, files, options) {
         console.log('allKeys length: %s', allKeys.length);
         const localFiles = files.map(item => item.substr(options.cwd.length));
         console.log('localFiles length: %s', localFiles.length);
-        const toDelete = allKeys.filter(item => !localFiles.includes(item));
+        let toDelete = allKeys.filter(item => !localFiles.includes(item));
+
+        if (options.deleteExclude) {
+          const excludeFiles = options.deleteExclude.map(item => item.substr(options.cwd.length));
+          toDelete = toDelete.filter(item => !excludeFiles.includes(item));
+        }
 
         if (toDelete.length > 0) {
 
