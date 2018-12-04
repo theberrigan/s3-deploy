@@ -68,10 +68,6 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
     options.invalidate = argv.invalidate;
   }
 
-  if(argv.hasOwnProperty('deleteExclude')) {
-    options.deleteExclude = glob.sync(argv.deleteExclude);
-  }
-
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
   options.globbedFiles = _.flatten(argv._.filter(Boolean).map(function(pattern) {
