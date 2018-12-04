@@ -99,8 +99,8 @@ function printOptions(options) {
   if (options.index) console.log('> Index:', options.index);
   if (options.deleteRemoved) {
     console.log('► Deleting removed files');
-    if (options.deleteExclude) {
-      console.log('  ▹ Excluding from delete: %s', options.deleteExclude);
+    if (options.deleteRemoved !== true) {
+      console.log('  ▹ Only matching pattern: %s', options.deleteRemoved);
     }
   }
   if (options.distId) {
