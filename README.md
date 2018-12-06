@@ -1,5 +1,7 @@
 # s3-deploy
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/import-io/s3-deploy.svg)](https://greenkeeper.io/)
+
 NodeJS bash utility for deploying files to Amazon S3
 
 ## Usage
