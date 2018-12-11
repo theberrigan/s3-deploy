@@ -264,7 +264,7 @@ export const deploy = co.wrap(function *(options) {
   const cfOptions = {};
   if (options.hasOwnProperty('distId')) {
     cfOptions.distId = options.distId;
-    if (cfOptions.invalidate) {
+    if (options.hasOwnProperty('invalidate')) {
       cfOptions.invalidate = options.invalidate.split(' ');
     }
   }
