@@ -113,15 +113,15 @@ co(function *() {
   // Starts the deployment of all found files.
   return yield deploy(options);
 })
-.then(() => {
-  console.log('Upload finished');
-})
-.catch(err => {
-  if (err.stack) {
-    console.error(err.stack);
-  } else {
-    console.error(String(err));
-  }
+  .then(() => {
+    console.log('Upload finished');
+  })
+  .catch(err => {
+    if (err.stack) {
+      console.error(err.stack);
+    } else {
+      console.error(String(err));
+    }
 
   process.exit(1); // eslint-disable-line
-});
+  });
