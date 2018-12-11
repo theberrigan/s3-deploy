@@ -1,7 +1,10 @@
 const chai = require('chai');
 const spies = require('chai-spies');
-const AWS = require('aws-sdk-mock');
+const AWSMock = require('aws-sdk-mock');
+const { AWS } = require('../../src/utils');
 const { invalidate } = require('../../src/cloudfront');
+
+AWSMock.setSDKInstance(AWS);
 
 chai.use(spies);
 
@@ -17,11 +20,13 @@ describe('#invalidate()', async () => {
     createInvalidationSpy = spy.returns((params, cb) => {
       cb(null, 'Callback');
     });
-    AWS.mock('CloudFront', 'createInvalidation', createInvalidationSpy);
+    AWSMock.mock('CloudFront', 'createInvalidation', createInvalidationSpy);
+
   });
 
-  it('should call aws cloudfront with given params', () => {
-    invalidate('Test123', ['/', 'index.html', '/build/static/test.png']);
+  it('should call aws cloudfront with given params', async () => {
+    
+    await invalidate('Test123', ['/', 'index.html', '/build/static/test.png']);
     expect(createInvalidationSpy).to.have.been.called.with({
       DistributionId: 'Test123',
       InvalidationBatch: {
