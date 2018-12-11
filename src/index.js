@@ -63,7 +63,6 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
     options.index = argv.index;
   }
 
-
   if(argv.hasOwnProperty('distId')) {
     options.distId = argv.distId;
     options.invalidate = argv.invalidate;
@@ -94,6 +93,12 @@ function printOptions(options) {
   console.log('► Private:', options.private ? true : false);
   if (options.ext) console.log('> Ext:', options.ext);
   if (options.index) console.log('> Index:', options.index);
+  if (options.deleteRemoved) {
+    console.log('► Deleting removed files');
+    if (options.deleteRemoved !== true) {
+      console.log('  ▹ Only matching pattern: %s', options.deleteRemoved);
+    }
+  }
   if (options.distId) {
     console.log('▼ CloudFront');
     console.log('  ▹ Distribution ID:', options.distId);
