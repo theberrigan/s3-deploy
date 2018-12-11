@@ -80,6 +80,7 @@ Enables to set the correct content type header when files has no extension. For 
 ```
 
 Removes files in S3, that are not available in the local copy of the directory. Useful to cleanup files that should no longer reside in the remote version.
+Now it also has the abilityto specify glob pattern that defines filter for files that should be considered to be deleted.
 
 ```
 --index
@@ -147,6 +148,10 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 * After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 1.2.0
+
+Adding ability to specify glob pattern to `removeDeleted` that defines filter for files that should be considered to be deleted.
 
 ### 1.1.5
 
