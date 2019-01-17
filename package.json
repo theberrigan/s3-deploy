@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/import-io/s3-deploy#readme",
   "dependencies": {
-    "aws-sdk": "^2.334.0",
+    "aws-sdk": "^2.390.0",
     "babel-polyfill": "^6.26.0",
     "co": "^4.5.4",
     "co-fs-extra": "^1.0.1",
