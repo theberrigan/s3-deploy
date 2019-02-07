@@ -75,6 +75,7 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
   }));
 
   let cacheControl = [];
+  if (argv.hasOwnProperty('noCache')) cacheControl.push('no-cache, no-store, must-revalidate');
   if (options.hasOwnProperty('cache')) cacheControl.push('max-age=' + options.cache);
   if (options.immutable) cacheControl.push('immutable');
   options.cacheControl = cacheControl.length ? cacheControl.join(', ') : undefined;
