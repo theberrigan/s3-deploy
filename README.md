@@ -26,6 +26,8 @@ Specifying `--gzip` will gzip all files before sending them to S3, and adds appr
 
 Use this parameter to specify the `Cache-Control: max-age=X` header, where X is the number of seconds a given item will be kept in the cache for. By default this value is undefined.
 
+This parameter cannot be used with `--immutable` or `--noCache` parameters. If those are used together, only the first one will be taken into account in the order 1) `noCache`, 2) `cache`, 3) `immutable`.
+
 ```
 --preventUpdates
 ```
@@ -38,6 +40,16 @@ that it already matches the ETag hash and thus is skipped and not uploaded. This
 ```
 
 When a page is refreshed, which is an extremely common social media scenario, elements that were previously marked immutable with an HTTP response header do not have to be revalidated with the server. It sets the `Cache-Control: immutable` header - [using-immutable-caching-to-speed-up-the-web](https://hacks.mozilla.org/2017/01/using-immutable-caching-to-speed-up-the-web/) This is useful with the `--preventUpdates` flag.
+
+This parameter cannot be used with `--cache` or `--noCache` parameters. If those are used together, only the first one will be taken into account in the order 1) `noCache`, 2) `cache`, 3) `immutable`.
+
+```
+--noCache
+```
+
+Use this parameter to specify `Cache-Control: no-cache, no-store, must-revalidate` header, where files with those headers won't be cached on the client side, and will force all browsers and CloudFront to grab the assets straight from S3.
+
+This parameter cannot be used with `--cache` or `--immutable` parameters. If those are used together, only the first one will be taken into account in the order 1) `noCache`, 2) `cache`, 3) `immutable`.
 
 ```
 --etag X
@@ -148,6 +160,10 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 * After changes are merged into master branch, checkout master branch, run tests one more time, and publish this package to npm repository.
 
 ## Changelog
+
+### 1.3.0
+
+Adding new parameter `--noCache` that prevents caching of assets, and forces them to be grabbed straight from S3.
 
 ### 1.2.0
 
