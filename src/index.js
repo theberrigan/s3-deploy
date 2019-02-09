@@ -31,6 +31,10 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
     options.cache = argv.cache;
   }
 
+  if(argv.hasOwnProperty('noCache')) {
+    options.noCache = true;
+  }
+
   if(argv.hasOwnProperty('immutable')) {
     options.immutable = true;
   }
@@ -74,10 +78,15 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
     return glob.sync(pattern);
   }));
 
-  let cacheControl = [];
-  if (options.hasOwnProperty('cache')) cacheControl.push('max-age=' + options.cache);
-  if (options.immutable) cacheControl.push('immutable');
-  options.cacheControl = cacheControl.length ? cacheControl.join(', ') : undefined;
+  let cacheControl = undefined;
+  if (options.noCache) {
+    cacheControl = 'no-cache, no-store, must-revalidate';
+  } else if (options.hasOwnProperty('cache')) {
+    cacheControl = 'max-age=' + options.cache;
+  } else if (options.immutable) {
+    cacheControl = 'immutable';
+  }
+  options.cacheControl = cacheControl;
 
   return options;
 }
