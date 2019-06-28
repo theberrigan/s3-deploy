@@ -61,7 +61,7 @@ You can also specify the `ETag: X` header, where X is either user-defined value 
 --signatureVersion v4
 ```
 
-You can also specify the `signatureVersion` that should be used by S3 client. Current allowed values are the same as in the constructor of the [S3 JS SDK Client](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property). In the time of writing those docs those values were `v2`, `v3` and `v4`.
+You can also specify the `signatureVersion` that should be used by S3 client. Current allowed values are the same as in the constructor of the [S3 JS SDK Client](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property). In the time of writing those docs those values were `v2`, `v3` and `v4`.
 
 ```
 --filePrefix
@@ -73,13 +73,13 @@ Use this parameter to specify a file prefix for all your destination files. For 
 --profile
 ```
 
-You can specify a specific AWS profile to use to connect to S3 (defaults to `default`). More information on how to setup AWS profiles is available in the [AWS docs](http://docs.aws.amazon.com/cli/latest/topic/config-vars.html).
+You can specify a specific AWS profile to use to connect to S3 (defaults to `default`). More information on how to setup AWS profiles is available in the [AWS docs](https://docs.aws.amazon.com/cli/latest/topic/config-vars.html).
 
 ```
 --private
 ```
 
-Use this parameter to specify that objects being uploaded will be stored with private ACL (Owner gets FULL_CONTROL. No one else has access rights). By default, 'public-read' ACL is set. More information on the canned-acl is available in the [AWS docs](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)
+Use this parameter to specify that objects being uploaded will be stored with private ACL (Owner gets FULL_CONTROL. No one else has access rights). By default, 'public-read' ACL is set. More information on the canned-acl is available in the [AWS docs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)
 
 ```
 --ext
@@ -116,7 +116,7 @@ https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.
 ## AWS Credentials
 
 AWS credentials can be provided via environment variables, or in the `~/.aws/credentials` file. More details here:
-http://docs.aws.amazon.com/cli/latest/topic/config-vars.html. Please make sure to define a default in your AWS credentials, this will help prevent a `Missing Credentials` error during deployment.
+https://docs.aws.amazon.com/cli/latest/topic/config-vars.html. Please make sure to define a default in your AWS credentials, this will help prevent a `Missing Credentials` error during deployment.
 
 ## Commands
 
