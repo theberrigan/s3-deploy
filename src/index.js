@@ -83,16 +83,16 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
   }));
 
   let cacheControl = undefined;
-  if (options.cacheControl) {
-    cacheControl = options.cacheControl;
-  } else if (options.noCache) {
-    cacheControl = 'no-cache, no-store, must-revalidate';
-  } else if (options.hasOwnProperty('cache')) {
-    cacheControl = 'max-age=' + options.cache;
-  } else if (options.immutable) {
-    cacheControl = 'immutable';
+  if (!options.cacheControl) {
+    if (options.noCache) {
+      cacheControl = 'no-cache, no-store, must-revalidate';
+    } else if (options.hasOwnProperty('cache')) {
+      cacheControl = 'max-age=' + options.cache;
+    } else if (options.immutable) {
+      cacheControl = 'immutable';
+    }
+    options.cacheControl = cacheControl;
   }
-  options.cacheControl = cacheControl;
 
   return options;
 }
