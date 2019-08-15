@@ -31,6 +31,12 @@ describe('#parseCliArgsToOptions()', () => {
       expect(parsedOptions.cacheControl).to.equal('immutable');
     });
 
+    it('should accept a --cacheControl argument to set the Cache-Control header specifically', () => {
+      const argv = [0, 0, '--cacheControl', 'public,max-age=60,s-maxage=3600'];
+      const parsedOptions = parseCliArgsToOptions(argv);
+      expect(parsedOptions.cacheControl).to.equal('public,max-age=60,s-maxage=3600');
+    });
+
     it('should not accept more than one caching argument', () => {
       const argv = [0, 0, '--noCache', '--cache', 34];
       const parsedOptions = parseCliArgsToOptions(argv);

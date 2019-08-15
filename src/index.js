@@ -31,6 +31,10 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
     options.cache = argv.cache;
   }
 
+  if(argv.hasOwnProperty('cacheControl')) {
+    options.cacheControl = argv.cacheControl;
+  }
+
   if(argv.hasOwnProperty('noCache')) {
     options.noCache = true;
   }
@@ -79,7 +83,9 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
   }));
 
   let cacheControl = undefined;
-  if (options.noCache) {
+  if (options.cacheControl) {
+    cacheControl = options.cacheControl;
+  } else if (options.noCache) {
     cacheControl = 'no-cache, no-store, must-revalidate';
   } else if (options.hasOwnProperty('cache')) {
     cacheControl = 'max-age=' + options.cache;
