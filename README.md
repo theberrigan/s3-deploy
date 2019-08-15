@@ -57,7 +57,7 @@ This parameter cannot be used with `--cache` or `--immutable` parameters. If tho
 
 Use this parameter to specify an entirely custom Cache-Control header, which will result in `Cache-Control: X`. Use this if you have more complicated cache-control needs.
 
-The `--cacheControl` option supercedes all other cache parameters (`--no-cache`, `--cache`, and `immutable`), which will be ignored.
+The `--cacheControl` option supercedes all other cache parameters (`no-cache`, `cache`, and `immutable`), which will be ignored.
 
 ```
 --etag X
