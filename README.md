@@ -169,6 +169,10 @@ Invokes eslint validation based on rules defined in the `.eslintrc` file.
 
 ## Changelog
 
+### 1.4.0
+
+Adding new parameter `--cacheControl` that allows specifying custom `Cache-Control` header value.
+
 ### 1.3.0
 
 Adding new parameter `--noCache` that prevents caching of assets, and forces them to be grabbed straight from S3.
