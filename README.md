@@ -52,6 +52,14 @@ Use this parameter to specify `Cache-Control: no-cache, no-store, must-revalidat
 This parameter cannot be used with `--cache` or `--immutable` parameters. If those are used together, only the first one will be taken into account in the order 1) `noCache`, 2) `cache`, 3) `immutable`.
 
 ```
+--cacheControl X
+```
+
+Use this parameter to specify an entirely custom Cache-Control header, which will result in `Cache-Control: X`. Use this if you have more complicated cache-control needs.
+
+The `--cacheControl` option supercedes all other cache parameters (`no-cache`, `cache`, and `immutable`), which will be ignored.
+
+```
 --etag X
 ```
 
