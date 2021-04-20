@@ -1,4 +1,4 @@
-# s3-deploy
+# s3-deploy with support .dot files
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/import-io/s3-deploy.svg)](https://greenkeeper.io/)
 
