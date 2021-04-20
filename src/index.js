@@ -79,7 +79,7 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
   // Get paths of all files from the glob pattern(s) that were passed as the
   // unnamed command line arguments.
   options.globbedFiles = _.flatten(argv._.filter(Boolean).map(function(pattern) {
-    return glob.sync(pattern);
+    return glob.sync(pattern, { dot: true });
   }));
 
   let cacheControl = undefined;
@@ -98,7 +98,7 @@ export function parseCliArgsToOptions(processArgv = process.argv) {
 }
 
 function printOptions(options) {
-  console.log('Deploying files: %s', options.globbedFiles);
+  console.log('Deploying files: %s', JSON.stringify(options.globbedFiles, null, 4));
   console.log('► Target S3 bucket: %s (%s region)', options.bucket, options.region);
   if (options.filePrefix) console.log('► Target file prefix: %s', options.filePrefix);
   if (options.gzip) console.log('► Gzip:', options.gzip);
